@@ -7,27 +7,40 @@ module RedmineWikipub
       # Patch routing table
       def patch
         Rails.application.routes.prepend do
-          constraints(lambda { |req| RedmineWikipub::RoutesPatch.host_satisfied? req }) do
+          constraints(lambda { |req| RedmineWikipub::Helper.host_satisfied? req }) do
             match "projects/#{Config::settings_project}", :to => 'wiki#show', :project_id => Config::settings_project, :via => :get
             #match "projects/:id", :to => 'wiki#show', :project_id => :id, :via => :get
             root :to => 'wiki#show', :project_id => Config::settings_project, :as => 'home'
           end
         end
       end
+    end
+  end
   
-      # Returns whether request is performed against choosen host
-      def host_satisfied? req
-        desired_hostname = Config::settings_hostname
-        %w{HTTP_HOST HTTP_X_FORWARDED_HOST}.any? do |header_name|
-          value = req.env[header_name]
-          if !value.blank? || desired_hostname.blank?
-            value = 'http://' + value unless value.starts_with? 'http://'
-            URI.parse(value).host =~ /^#{desired_hostname}$/
-          end          
+  # Patch MenuHelper method
+  module MenuHelperPatch 
+    def self.included(base)
+      
+      base.class_eval do
+        alias_method :original_allowed_node?, :allowed_node?
+
+        # Patched method to check whether a menu node is applicable
+        def allowed_node?(node, user, project)  
+          if request && RedmineWikipub::Helper.host_satisfied?(request)
+            if project && project.name == RedmineWikipub::Config::settings_project
+              if node && [:activity, :overview].include?(node.name)
+                #Rails.logger.debug("Ban view for the wiki project") if Rails.logger && Rails.logger.debug?      
+                return false
+              end
+            end
+          end  
+          original_allowed_node? node, user, project                              
         end
+        
       end
     end
   end
+  
   
   # Entry point and configuration facade
   class Config
@@ -41,8 +54,14 @@ module RedmineWikipub
       end
     
       def bootstrap
-        Helper::check_config 
+        Helper::check_config
+        return if Config::settings_project.blank?
+        
         RoutesPatch::patch
+        ActionDispatch::Callbacks.to_prepare do
+          Redmine::MenuManager::MenuHelper.send(:include, MenuHelperPatch)
+        end
+        # ProjectPatch::patch
       end
     end
   end
