@@ -9,7 +9,7 @@ module RedmineWikipub
         Rails.application.routes.prepend do
           constraints(lambda { |req| RedmineWikipub::Helper.host_satisfied? req }) do
             match "projects/#{Config::settings_project}", :to => 'wiki#show', :project_id => Config::settings_project, :via => :get
-            #match "projects/:id", :to => 'wiki#show', :project_id => :id, :via => :get
+            match "projects", :to => redirect('/')
             root :to => 'wiki#show', :project_id => Config::settings_project, :as => 'home'
           end
         end
@@ -27,8 +27,8 @@ module RedmineWikipub
         # Patched method to check whether a menu node is applicable
         def allowed_node?(node, user, project)  
           if request && RedmineWikipub::Helper.host_satisfied?(request)
-            if project && project.name == RedmineWikipub::Config::settings_project
-              if node && [:activity, :overview].include?(node.name)
+            if !project || project.name == RedmineWikipub::Config::settings_project
+              if node && RedmineWikipub::Helper.excluded_menu_names.include?(node.name)
                 #Rails.logger.debug("Ban view for the wiki project") if Rails.logger && Rails.logger.debug?      
                 return false
               end

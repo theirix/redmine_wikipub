@@ -1,6 +1,8 @@
 module RedmineWikipub
   
   class Helper
+    @@excluded_menu_names = nil
+    
     def self.check_config
       Rails.logger.debug("Wikipub settings: host=#{Config::settings_hostname} project=#{Config::settings_project}") if Rails.logger && Rails.logger.debug?
     end
@@ -15,6 +17,15 @@ module RedmineWikipub
           URI.parse(value).host =~ /^#{desired_hostname}$/
         end          
       end
+    end
+    
+    def self.excluded_menu_names
+      if @@excluded_menu_names.nil?
+        @@excluded_menu_names = [:project_menu, :top_menu, :account_menu].map do |menu_type|
+          Redmine::MenuManager.items(menu_type).map { |m| m.name }
+        end.flatten.select { |m| m != :root }
+      end
+      @@excluded_menu_names
     end
     
   end
