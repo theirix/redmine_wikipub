@@ -2,8 +2,7 @@ module RedmineWikipub
   
   class Helper
     def self.check_config
-      hostname = Setting.plugin_redmine_wikipub['wikipub_hostname']
-      Rails.logger.warn "Wikipub hostname #{hostname}"
+      Rails.logger.debug("Wikipub settings: host=#{Config::settings_hostname} project=#{Config::settings_project}") if logger && logger.debug?
     end
   end
 end
