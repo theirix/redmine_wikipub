@@ -1,0 +1,11 @@
+# English strings go here for Rails i18n
+en:
+  wikipub:
+    greeting: 'Hello, wikipub plugin!'
+    hostname:
+      label: 'Hostname regex'
+      description: 'Requests for this hostname will be redirected to wiki page'
+    project:
+      label: 'Pubwiki project'
+      description: 'Public project with wiki used for the hostname'
+  

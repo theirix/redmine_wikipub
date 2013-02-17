@@ -1,0 +1,11 @@
+<%=t 'wikipub.greeting' %>
+
+<p><label><%=t 'wikipub.hostname.label' %>: </label>
+<%= text_field_tag 'settings[wikipub_hostname]', @settings['wikipub_hostname'], :size => 100 %><br />
+<em><%=t 'wikipub.hostname.description' %></em>
+</p>
+
+<p><label><%=t 'wikipub.project.label' %>: </label>
+<%= text_field_tag 'settings[wikipub_project]', @settings['wikipub_project'], :size => 100 %><br />
+<em><%=t 'wikipub.project.description' %></em>
+</p>
