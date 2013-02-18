@@ -1,11 +1,13 @@
 # English strings go here for Rails i18n
 en:
   wikipub:
-    greeting: 'Hello, wikipub plugin!'
+    greeting: 'Customize a project to become a standalone wikipage served from a specific hostname'
     hostname:
-      label: 'Hostname regex'
+      label: 'Hostname'
       description: 'Requests for this hostname will be redirected to wiki page'
     project:
-      label: 'Pubwiki project'
+      label: 'Wikipub project'
       description: 'Public project with wiki used for the hostname'
-  
+    theme:
+      label: 'Theme'
+      description: 'Theme to use with wiki project'

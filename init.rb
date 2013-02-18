@@ -6,7 +6,7 @@ Redmine::Plugin.register :redmine_wikipub do
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
   
-  settings :default => {'wikipub_hostname' => "", 'wikipub_project' => ""},
+  settings :default => {'wikipub_hostname' => "", 'wikipub_project' => "", 'wikipub_theme' => ""},
     :partial => 'settings/wikipub_settings'
   
 end

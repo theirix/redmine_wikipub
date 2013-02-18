@@ -9,3 +9,8 @@
 <%= text_field_tag 'settings[wikipub_project]', @settings['wikipub_project'], :size => 100 %><br />
 <em><%=t 'wikipub.project.description' %></em>
 </p>
+
+<p><label><%=t 'wikipub.theme.label' %>: </label>
+	<%= select_tag 'settings[wikipub_theme]', options_redmine_themes %> <br />
+<em><%=t 'wikipub.theme.description' %></em>
+</p>

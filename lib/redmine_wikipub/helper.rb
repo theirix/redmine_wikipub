@@ -1,21 +1,25 @@
+require 'application_helper'
+
 module RedmineWikipub
   
   class Helper
     @@excluded_menu_names = nil
     
-    def self.check_config
-      Rails.logger.debug("Wikipub settings: host=#{Config::settings_hostname} project=#{Config::settings_project}") if Rails.logger && Rails.logger.debug?
-    end
-    
     # Returns whether request is performed against choosen host
     def self.host_satisfied? request
       desired_hostname = Config::settings_hostname
       %w{HTTP_HOST HTTP_X_FORWARDED_HOST}.any? do |header_name|
-        value = request.env[header_name]
-        if !value.blank? || desired_hostname.blank?
-          value = 'http://' + value unless value.starts_with? 'http://'
-          URI.parse(value).host =~ /^#{desired_hostname}$/
-        end          
+        begin
+          value = request.env[header_name]
+          if !value.blank? || desired_hostname.blank?
+            uri_str = value.dup
+            uri_str = 'http://' + uri_str unless uri_str.starts_with? 'http://'
+            URI.parse(uri_str).host =~ /^#{desired_hostname}$/
+          end
+        rescue Error => e
+          Rails.logger.warn("Host check failed with #{e}") if Rails.logger && Rails.logger.warn?
+          false
+        end        
       end
     end
     
@@ -29,4 +33,6 @@ module RedmineWikipub
     end
     
   end
+    
 end
+
