@@ -21,19 +21,18 @@ module RedmineWikipub
       # Check config, set up routes and hooks
       def bootstrap
         check_config
-        return if Config::settings_project.blank?
 
         Patches::RoutesPatch::prepend
 
         # Rails classes patches
         ActionDispatch::Callbacks.to_prepare do
-          unless Redmine::MenuManager::MenuHelper.included_modules.include? Patches::MenuHelperPatch
+          unless Redmine::MenuManager::MenuHelper.included_modules.include? RedmineWikipub::Patches::MenuHelperPatch
             Redmine::MenuManager::MenuHelper.send(:include, Patches::MenuHelperPatch)
           end
-          unless ApplicationHelper.included_modules.include? Patches::ThemesPatch
+          unless ApplicationHelper.included_modules.include? RedmineWikipub::Patches::ThemesPatch
             ApplicationHelper.send(:include, Patches::ThemesPatch)
           end
-          unless ApplicationHelper.included_modules.include? Patches::ViewHelperPatch
+          unless ApplicationHelper.included_modules.include? RedmineWikipub::Patches::ViewHelperPatch
             ApplicationHelper.send(:include, Patches::ViewHelperPatch)
           end
         end
