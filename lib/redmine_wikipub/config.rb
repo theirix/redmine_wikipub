@@ -12,7 +12,8 @@ module RedmineWikipub
       def prepend
         Rails.application.routes.prepend do
           constraints(lambda { |req| RedmineWikipub::Helper.host_satisfied? req }) do
-            match "projects/#{Config::settings_project}", :to => 'wiki#show', :project_id => Config::settings_project, :via => :get
+            match "projects/#{Config::settings_project}" => redirect("/projects/#{Config::settings_project}/wiki")
+            match "projects/#{Config::settings_project}/activity" => redirect("/projects/#{Config::settings_project}/wiki")
             match "projects", :to => redirect('/')
             root :to => 'wiki#show', :project_id => Config::settings_project, :as => 'home'
           end
@@ -34,7 +35,6 @@ module RedmineWikipub
           if request && RedmineWikipub::Helper.host_satisfied?(request)
             if !project || project.name == RedmineWikipub::Config::settings_project
               if node && RedmineWikipub::Helper.excluded_menu_names.include?(node.name)
-                #Rails.logger.debug("Ban view for the wiki project") if Rails.logger && Rails.logger.debug?
                 return false
               end
             end
@@ -59,7 +59,7 @@ module RedmineWikipub
           else
             theme_id = String.new(Setting.ui_theme)
           end
-          Rails.logger.debug("Check theme #{theme_id}") if Rails.logger && Rails.logger.debug?
+          #Rails.logger.debug("Check theme #{theme_id}") if Rails.logger && Rails.logger.debug?
           @current_theme = Redmine::Themes.theme(theme_id)
         end
 
