@@ -6,7 +6,7 @@
 </p>
 
 <p><label><%=t 'wikipub.project.label' %>: </label>
-<%= text_field_tag 'settings[wikipub_project]', @settings['wikipub_project'], :size => 100 %><br />
+	<%= select_tag 'settings[wikipub_project]', options_redmine_projects, :include_blank => true %> <br />
 <em><%=t 'wikipub.project.description' %></em>
 </p>
 

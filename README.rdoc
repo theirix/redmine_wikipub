@@ -1,3 +1,22 @@
-= redmine_wikipub
+= Redmine Wikipub plugin
 
-Description goes here
+Plugin allows to customize a project to become a standalone wikipage.
+
+== Features
+
+Wikipub is enabled only for the dedicated hostname specified in settings.
+You can always access wikipub project as a classic redmine project.
+
+Wikipub project strips all menus except 'Home', redirects all accesses to
+main wiki page and applies a choosen theme.
+
+Remember that it is administrator responsibility to disable unneeded modules and adjust permissions.
+
+== Issues
+
+ * Changing settings require restart of redmine. Should be fixed soon.
+
+== Requirements:
+
+ * Redmine 2.x
+ * Migration is not needed

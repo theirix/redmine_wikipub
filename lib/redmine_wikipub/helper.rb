@@ -27,7 +27,7 @@ module RedmineWikipub
       if @@excluded_menu_names.nil?
         @@excluded_menu_names = [:project_menu, :top_menu, :account_menu].map do |menu_type|
           Redmine::MenuManager.items(menu_type).map { |m| m.name }
-        end.flatten.select { |m| m != :root }
+        end.flatten.select { |m| m != :root && m != :home }
       end
       @@excluded_menu_names
     end
