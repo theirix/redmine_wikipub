@@ -6,7 +6,6 @@ Plugin allows to customize a project to become a standalone wikipage.
 
 Wikipub is enabled only for the dedicated hostname specified in settings.
 You can always access wikipub project as a classic redmine project.
-
 Wikipub project strips all menus except 'Home', redirects all accesses to
 main wiki page and applies a choosen theme.
 
@@ -14,9 +13,9 @@ Remember that it is administrator responsibility to disable unneeded modules and
 
 == Issues
 
- * Changing settings require restart of redmine. Should be fixed soon.
+- Changing settings require restart of redmine. Should be fixed soon.
 
 == Requirements:
 
- * Redmine 2.x
- * Migration is not needed
+- Redmine 2.x
+- Migration is not needed
