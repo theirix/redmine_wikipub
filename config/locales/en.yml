@@ -3,8 +3,8 @@ en:
   wikipub:
     greeting: 'Customize a project to become a standalone wikipage served from a specific hostname'
     hostname:
-      label: 'Hostname'
-      description: 'Requests for this hostname will be redirected to wiki page'
+      label: 'Hostname regex'
+      description: 'Requests for hostnames matching this regex will be redirected to wiki page'
     project:
       label: 'Wikipub project'
       description: 'Public project with wiki used for the hostname'

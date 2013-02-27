@@ -45,7 +45,7 @@ module RedmineWikipub
           Setting.plugin_redmine_wikipub['wikipub_'+shortkey] ||= ''
         end
 
-        Rails.logger.debug("Wikipub settings: host=#{Config::settings_hostname} project=#{Config::settings_project}") if Rails.logger && Rails.logger.debug?
+        Rails.logger.debug("Wikipub settings: hostregex=#{Config::settings_hostname} project=#{Config::settings_project}") if Rails.logger && Rails.logger.debug?
       end
 
 
