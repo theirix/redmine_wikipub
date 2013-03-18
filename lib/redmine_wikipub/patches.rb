@@ -35,7 +35,7 @@ module RedmineWikipub
           def allowed_node?(node, user, project)
             if request && Helper.host_satisfied?(request)
               if !project || project.name == Config::settings_project
-                if node && Helper.excluded_menu_names.include?(node.name)
+                if node && Helper.excluded_menu_names(Config::settings_allowaccount?).include?(node.name)
                   return false
                 end
               end

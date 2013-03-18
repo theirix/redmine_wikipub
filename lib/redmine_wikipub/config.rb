@@ -17,6 +17,10 @@ module RedmineWikipub
         Setting.plugin_redmine_wikipub['wikipub_theme']
       end
 
+      def settings_allowaccount?
+        Setting.plugin_redmine_wikipub['wikipub_allowaccount'] || 0
+      end
+
       # Entry point
       # Check config, set up routes and hooks
       def bootstrap
@@ -41,11 +45,12 @@ module RedmineWikipub
       private
 
       def check_config
-        %w{hostname project theme}.each do |shortkey|
+        %w{hostname project theme allowaccount}.each do |shortkey|
           Setting.plugin_redmine_wikipub['wikipub_'+shortkey] ||= ''
         end
 
-        Rails.logger.debug("Wikipub settings: hostregex=#{Config::settings_hostname} project=#{Config::settings_project}") if Rails.logger && Rails.logger.debug?
+        Rails.logger.debug("Wikipub settings: hostregex=#{Config::settings_hostname} "+
+          "project=#{Config::settings_project} allowaccount=#{Config::settings_allowaccount?}") if Rails.logger && Rails.logger.debug?
       end
 
 

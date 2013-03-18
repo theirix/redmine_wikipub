@@ -14,3 +14,9 @@
 	<%= select_tag 'settings[wikipub_theme]', options_redmine_themes %> <br />
 <em><%=t 'wikipub.theme.description' %></em>
 </p>
+
+<p><label><%=t 'wikipub.allowaccount.label' %>: </label>
+<%= hidden_field_tag 'settings[wikipub_allowaccount]', 0, :id => nil %>
+<%= check_box_tag 'settings[wikipub_allowaccount]', 1, ('1'==@settings['wikipub_allowaccount']) %><br />
+<em><%=t 'wikipub.allowaccount.description' %></em>
+</p>

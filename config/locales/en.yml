@@ -11,3 +11,6 @@ en:
     theme:
       label: 'Theme'
       description: 'Theme to use with wiki project'
+    allowaccount:
+      label: 'Allow account'
+      description: 'Allow to sign in/sign up links in the wiki'

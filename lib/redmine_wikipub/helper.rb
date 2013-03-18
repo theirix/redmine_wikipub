@@ -3,8 +3,6 @@ require 'application_helper'
 module RedmineWikipub
   
   class Helper
-    @@excluded_menu_names = nil
-    
     # Returns whether request is performed against choosen host
     def self.host_satisfied? request
       desired_hostname_regex = Config::settings_hostname
@@ -23,13 +21,12 @@ module RedmineWikipub
       end
     end
     
-    def self.excluded_menu_names
-      if @@excluded_menu_names.nil?
-        @@excluded_menu_names = [:project_menu, :top_menu, :account_menu].map do |menu_type|
-          Redmine::MenuManager.items(menu_type).map { |m| m.name }
-        end.flatten.select { |m| m != :root && m != :home }
-      end
-      @@excluded_menu_names
+    def self.excluded_menu_names with_account
+      categories = [:project_menu, :top_menu]
+      categories << :account_menu unless with_account
+      categories.map do |menu_type|
+        Redmine::MenuManager.items(menu_type).map { |m| m.name }
+      end.flatten.select { |m| m != :root && m != :home }
     end
     
   end
