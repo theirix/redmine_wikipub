@@ -24,9 +24,11 @@ module RedmineWikipub
     def self.excluded_menu_names with_account
       categories = [:project_menu, :top_menu]
       categories << :account_menu unless with_account
+      allowed_nodes = [ :root, :home ]
+      allowed_nodes += [ :issues, :new_issue, :wiki ] if User.current.logged?
       categories.map do |menu_type|
         Redmine::MenuManager.items(menu_type).map { |m| m.name }
-      end.flatten.select { |m| m != :root && m != :home }
+      end.flatten.select { |m| !allowed_nodes.include?(m) }
     end
     
   end
