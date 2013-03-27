@@ -42,6 +42,9 @@ module RedmineWikipub
           unless Mailer.included_modules.include? RedmineWikipub::Patches::MailerPatch
             Mailer.send(:include, Patches::MailerPatch)
           end
+          unless AccountController.included_modules.include? RedmineWikipub::Patches::AccountControllerPatch
+            AccountController.send(:include, Patches::AccountControllerPatch)
+          end
         end
       end
 

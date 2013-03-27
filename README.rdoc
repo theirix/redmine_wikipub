@@ -18,4 +18,5 @@ Remember that it is administrator responsibility to disable unneeded modules and
 == Requirements:
 
 - Redmine 2.x
+- actionmailer-with-request gem (place it at 'Gemfile.local')
 - Migration is not needed

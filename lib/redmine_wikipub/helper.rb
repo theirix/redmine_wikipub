@@ -11,12 +11,15 @@ module RedmineWikipub
       check_header_host(request.env['HTTP_HOST']) || check_header_host(request.env['HTTP_X_FORWARDED_HOST'])
     end
 
+    def self.prepend_with prefix, s
+      s.starts_with?(prefix) ? s : (prefix + s)
+    end
+
     # Returns whether request is performed against choosen host
     def self.check_header_host value
       begin
         if !value.blank? && !Config::settings_hostname.blank?
-          uri_str = value.dup
-          uri_str = 'http://' + uri_str unless uri_str.starts_with? 'http://'
+          uri_str = prepend_with('http://', value.dup)
           host = URI.parse(uri_str).host
           host if host =~ /#{Config::settings_hostname}/
         end

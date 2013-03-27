@@ -1,6 +1,9 @@
 require 'redmine/menu_manager'
 require 'redmine/themes'
 require 'application_helper'
+require 'mailer'
+require 'auth_source'
+require 'account_controller'
 
 module RedmineWikipub
   module Patches
@@ -87,6 +90,7 @@ module RedmineWikipub
       end
     end
 
+    # Patch to provide a link to wikipub host in the registration e-mail
     module MailerPatch
       def self.included(base)
         base.class_eval do
@@ -105,5 +109,23 @@ module RedmineWikipub
       end
 
     end
+
+    # Patch to redirect user to wiki page when he activated account by registration e-mail
+    module AccountControllerPatch
+      def self.included(base)
+        base.class_eval do
+          alias_method :original_successful_authentication, :successful_authentication
+
+          def successful_authentication(user)
+            wikipub_host = Helper.current_wikipub_host(request)
+            params[:back_url] = Helper.prepend_with('http://', wikipub_host) unless wikipub_host.blank?
+            original_successful_authentication(user)
+          end
+
+        end
+      end
+    end
+    
+    # end of module Patches
+    end
   end
-end
