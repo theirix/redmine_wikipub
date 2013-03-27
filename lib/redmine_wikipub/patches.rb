@@ -86,6 +86,24 @@ module RedmineWikipub
         end
       end
     end
-  
+
+    module MailerPatch
+      def self.included(base)
+        base.class_eval do
+
+          alias_method :original_url_for, :url_for
+
+          def url_for(options = {})
+            wikipub_host = Helper.current_wikipub_host(request)
+            if wikipub_host.blank?
+              original_url_for(options)
+            else
+              original_url_for(options.merge({:host => wikipub_host}))
+            end
+          end
+        end
+      end
+
+    end
   end
 end

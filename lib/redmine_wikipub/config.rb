@@ -39,6 +39,9 @@ module RedmineWikipub
           unless ApplicationHelper.included_modules.include? RedmineWikipub::Patches::ViewHelperPatch
             ApplicationHelper.send(:include, Patches::ViewHelperPatch)
           end
+          unless Mailer.included_modules.include? RedmineWikipub::Patches::MailerPatch
+            Mailer.send(:include, Patches::MailerPatch)
+          end
         end
       end
 
