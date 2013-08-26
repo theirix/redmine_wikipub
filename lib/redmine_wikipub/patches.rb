@@ -19,7 +19,7 @@ module RedmineWikipub
               match "projects/#{Config::settings_project}" => redirect("/projects/#{Config::settings_project}/wiki")
               match "projects/#{Config::settings_project}/activity" => redirect("/projects/#{Config::settings_project}/wiki")
               match "projects", :to => redirect('/')
-              root :to => 'wiki#show', :project_id => Config::settings_project, :as => 'home'
+              match "/", :to => redirect("/projects/#{Config::settings_project}/wiki")
             end
           end
         end
