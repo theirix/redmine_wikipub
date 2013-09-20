@@ -16,7 +16,7 @@ module RedmineWikipub
         def prepend
 					Config::entries.each do |ce|
 						Rails.application.routes.prepend do
-							constraints(lambda { |req| RedmineWikipub::Helper.find_current_entry(req) }) do
+							constraints(lambda { |req| RedmineWikipub::Helper.find_current_entry(ce, req) }) do
 								match "projects/#{ce.project}" => redirect("/projects/#{ce.project}/wiki")
 								match "projects/#{ce.project}/activity" => redirect("/projects/#{ce.project}/wiki")
 								match "projects", :to => redirect('/')
@@ -39,7 +39,7 @@ module RedmineWikipub
           # Patched method to check whether a menu node is applicable
           def allowed_node?(node, user, project)
             if request
-							entry = Helper.find_current_entry(request)
+							entry = Helper.find_current_entry_any(request)
 							if entry
 								if !project || project.name == entry.project
 									if node && Helper.excluded_menu_names(entry.allowaccount?).include?(node.name)
@@ -65,7 +65,7 @@ module RedmineWikipub
           def current_theme
 						theme_id = nil
 						if request
-							entry = Helper.find_current_entry(request)
+							entry = Helper.find_current_entry_any(request)
 							theme_id = String.new(entry.theme) if entry
 						end
             theme_id = String.new(Setting.ui_theme) unless theme_id
