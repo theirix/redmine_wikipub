@@ -61,7 +61,7 @@ module RedmineWikipub
       private
 
       def load_config
-        json_config = JSON::load Setting.plugin_redmine_wikipub['wikipub_extraconf'] ||= "{'entries':[]}"
+        json_config = JSON::load Setting.plugin_redmine_wikipub['wikipub_extraconf'] ||= '{"entries":[]}'
 				@@entries = json_config['entries'].map { |je| Entry.new je }
 
 				@@entries.each do |e|
