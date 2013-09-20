@@ -1,30 +1,43 @@
 require 'application_helper'
+require 'json'
 
 module RedmineWikipub
 
   # Entry point and configuration facade
   class Config
+
+		class Entry
+			def initialize json_piece
+				@json = json_piece
+			end
+
+			def hostname
+				@json['hostname']
+			end
+
+      def project
+				@json['project']
+      end
+
+      def theme
+				@json['theme']
+      end
+
+      def allowaccount?
+        @json['allowaccount']
+      end
+		end
+
     class << self
-      def settings_hostname
-        Setting.plugin_redmine_wikipub['wikipub_hostname']
-      end
 
-      def settings_project
-        Setting.plugin_redmine_wikipub['wikipub_project']
-      end
-
-      def settings_theme
-        Setting.plugin_redmine_wikipub['wikipub_theme']
-      end
-
-      def settings_allowaccount?
-        Setting.plugin_redmine_wikipub['wikipub_allowaccount'] || 0
-      end
+			def entries
+				@@entries
+			end
 
       # Entry point
       # Check config, set up routes and hooks
       def bootstrap
-        check_config
+        load_config
 
         Patches::RoutesPatch::prepend
 
@@ -35,9 +48,6 @@ module RedmineWikipub
           end
           unless ApplicationHelper.included_modules.include? RedmineWikipub::Patches::ThemesPatch
             ApplicationHelper.send(:include, Patches::ThemesPatch)
-          end
-          unless ApplicationHelper.included_modules.include? RedmineWikipub::Patches::ViewHelperPatch
-            ApplicationHelper.send(:include, Patches::ViewHelperPatch)
           end
           unless Mailer.included_modules.include? RedmineWikipub::Patches::MailerPatch
             Mailer.send(:include, Patches::MailerPatch)
@@ -50,13 +60,14 @@ module RedmineWikipub
 
       private
 
-      def check_config
-        %w{hostname project theme allowaccount}.each do |shortkey|
-          Setting.plugin_redmine_wikipub['wikipub_'+shortkey] ||= ''
-        end
+      def load_config
+        json_config = JSON::load Setting.plugin_redmine_wikipub['wikipub_extraconf'] ||= "{'entries':[]}"
+				@@entries = json_config['entries'].map { |je| Entry.new je }
 
-        Rails.logger.debug("Wikipub settings: hostregex=#{Config::settings_hostname} "+
-          "project=#{Config::settings_project} allowaccount=#{Config::settings_allowaccount?}") if Rails.logger && Rails.logger.debug?
+				@@entries.each do |e|
+					Rails.logger.debug("Wikipub entry: hostregex=#{e.hostname} "+
+						"project=#{e.project} theme=#{e.theme} allowaccount=#{e.allowaccount?}") if Rails.logger && Rails.logger.debug?
+				end
       end
 
 

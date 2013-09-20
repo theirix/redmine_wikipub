@@ -6,7 +6,7 @@ Redmine::Plugin.register :redmine_wikipub do
   url 'http://github.com/theirix/redmine_wikipub'
 
   settings :default => {'wikipub_hostname' => "", 'wikipub_project' => "",
-      'wikipub_theme' => "", 'wikipub_allowaccount' => false},
+      'wikipub_theme' => "", 'wikipub_allowaccount' => false, 'wikipub_extraconf' => "" },
     :partial => 'settings/wikipub_settings'
 
 end

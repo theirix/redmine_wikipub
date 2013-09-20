@@ -2,15 +2,6 @@
 en:
   wikipub:
     greeting: 'Customize a project to become a standalone wikipage served from a specific hostname'
-    hostname:
-      label: 'Hostname regex'
-      description: 'Requests for hostnames matching this regex will be redirected to wiki page'
-    project:
-      label: 'Wikipub project'
-      description: 'Public project with wiki used for the hostname'
-    theme:
-      label: 'Theme'
-      description: 'Theme to use with wiki project'
-    allowaccount:
-      label: 'Allow account'
-      description: 'Allow to sign in/sign up links in the wiki'
+    extraconf:
+      label: 'Configuration'
+      description: 'JSON with configuration. Example: { "entries" : [ {"hostname": "hostname-regex", "project": "project-name", "theme": "theme-name", "allowaccount": true } ] }'

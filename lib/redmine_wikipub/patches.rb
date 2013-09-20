@@ -14,14 +14,16 @@ module RedmineWikipub
 
         # Patch routing table
         def prepend
-          Rails.application.routes.prepend do
-            constraints(lambda { |req| RedmineWikipub::Helper.host_satisfied? req }) do
-              match "projects/#{Config::settings_project}" => redirect("/projects/#{Config::settings_project}/wiki")
-              match "projects/#{Config::settings_project}/activity" => redirect("/projects/#{Config::settings_project}/wiki")
-              match "projects", :to => redirect('/')
-              match "/", :to => redirect("/projects/#{Config::settings_project}/wiki")
-            end
-          end
+					Config::entries.each do |ce|
+						Rails.application.routes.prepend do
+							constraints(lambda { |req| RedmineWikipub::Helper.find_current_entry(req) }) do
+								match "projects/#{ce.project}" => redirect("/projects/#{ce.project}/wiki")
+								match "projects/#{ce.project}/activity" => redirect("/projects/#{ce.project}/wiki")
+								match "projects", :to => redirect('/')
+								match "/", :to => redirect("/projects/#{ce.project}/wiki")
+							end
+						end
+					end
         end
 
       end
@@ -36,12 +38,15 @@ module RedmineWikipub
 
           # Patched method to check whether a menu node is applicable
           def allowed_node?(node, user, project)
-            if request && Helper.host_satisfied?(request)
-              if !project || project.name == Config::settings_project
-                if node && Helper.excluded_menu_names(Config::settings_allowaccount?).include?(node.name)
-                  return false
-                end
-              end
+            if request
+							entry = Helper.find_current_entry(request)
+							if entry
+								if !project || project.name == entry.project
+									if node && Helper.excluded_menu_names(entry.allowaccount?).include?(node.name)
+										return false
+									end
+								end
+							end
             end
             original_allowed_node? node, user, project
           end
@@ -58,12 +63,13 @@ module RedmineWikipub
 
           # patched method
           def current_theme
-            if request && Helper.host_satisfied?(request)
-              theme_id = (Config::settings_theme || Setting.ui_theme)
-            else
-              theme_id = String.new(Setting.ui_theme)
-            end
-            #Rails.logger.debug("Check theme #{theme_id}") if Rails.logger && Rails.logger.debug?
+						theme_id = nil
+						if request
+							entry = Helper.find_current_entry(request)
+							theme_id = String.new(entry.theme) if entry
+						end
+            theme_id = String.new(Setting.ui_theme) unless theme_id
+            # Rails.logger.debug("Check theme #{theme_id}, #{Setting.ui_theme}") if Rails.logger && Rails.logger.debug?
             @current_theme = Redmine::Themes.theme(theme_id)
           end
 
@@ -71,24 +77,6 @@ module RedmineWikipub
       end
     end
 
-    # Patch ApplicationController to provide a view helper
-    module ViewHelperPatch
-      def self.included(base)
-        base.class_eval do
-
-          def options_redmine_themes
-            items = Redmine::Themes.themes.collect {|t| [t.name, t.id] } + [[I18n.t(:label_default), '']]
-            options_for_select items, (Config::settings_theme || '')
-          end
-
-          def options_redmine_projects
-            items = Project.all.collect {|t| [t.name, t.identifier] }
-            options_for_select items, (Config::settings_project || '')
-          end
-
-        end
-      end
-    end
 
     # Patch to provide a link to wikipub host in the registration e-mail
     module MailerPatch
