@@ -125,7 +125,7 @@ module RedmineWikipub
         end
       end
     end
-    
+
     # end of module Patches
-    end
   end
+end
