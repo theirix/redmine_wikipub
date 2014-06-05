@@ -86,7 +86,7 @@ module RedmineWikipub
 					alias_method :original_url_for, :url_for
 
 					def url_for(options = {})
-						wikipub_host = Helper.current_wikipub_host(request)
+						wikipub_host = request ? Helper.current_wikipub_host(request) : nil
 						if wikipub_host.blank?
 							original_url_for(options)
 						else
@@ -105,7 +105,7 @@ module RedmineWikipub
 					alias_method :original_successful_authentication, :successful_authentication
 
 					def successful_authentication(user)
-						wikipub_host = Helper.current_wikipub_host(request)
+						wikipub_host = request ? Helper.current_wikipub_host(request) : nil
 						params[:back_url] = Helper.prepend_with('http://', wikipub_host) unless wikipub_host.blank?
 						original_successful_authentication(user)
 					end
