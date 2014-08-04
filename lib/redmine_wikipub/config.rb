@@ -1,5 +1,6 @@
 require 'application_helper'
 require 'json'
+require 'cgi'
 
 module RedmineWikipub
 
@@ -61,9 +62,17 @@ module RedmineWikipub
 			private
 
 			def load_config
-				json_config = JSON::load Setting.plugin_redmine_wikipub['wikipub_extraconf'] ||= '{"entries":[]}'
-				@@entries = json_config['entries'].map { |je| Entry.new je }
+        json_config = nil
+        begin
+          if Setting.plugin_redmine_wikipub && !Setting.plugin_redmine_wikipub['wikipub_extraconf'].blank?
+            json_config = JSON::load(Setting.plugin_redmine_wikipub['wikipub_extraconf'])
+          end
+        rescue => e
+          Rails.logger.warn("JSON load failed: #{e}")
+        end
+        json_config = JSON::load('{"entries":[]}') unless json_config
 
+				@@entries = json_config['entries'].map { |je| Entry.new je }
 				@@entries.each do |e|
 					Rails.logger.debug("Wikipub entry: hostregex=#{e.hostname} "+
 														 "project=#{e.project} theme=#{e.theme} allowaccount=#{e.allowaccount?}") if Rails.logger && Rails.logger.debug?
