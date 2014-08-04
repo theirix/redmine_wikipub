@@ -106,17 +106,22 @@ module RedmineWikipub
 
 					def successful_authentication(user)
 						wikipub_host = request ? Helper.current_wikipub_host(request) : nil
+
 						unless wikipub_host.blank?
-							Rails.logger.debug("Patched successful_authentication request #{request.inspect}") if Rails.logger.debug?
-							if !request.env['HTTP_REFERER'].blank?
-								uri = URI.parse(CGI.unescape(request.env['HTTP_REFERER']))
-								if uri.query
-									back_url = CGI.parse(uri.query)['back_url'].first
-									if back_url
-										params[:back_url] = back_url.to_s
-										Rails.logger.debug("Patched back_url is #{params[:back_url]}") if Rails.logger.debug?
-									end
+							# redirect to root if default login succeeded (i.e. simple login) instead of /mypage
+							if request.env['HTTP_REFERER'] == url_for(:controller => 'account', :action => 'login')
+								back_url = Helper.prepend_with('http://', wikipub_host)
+							else
+								# redirect to actual referer if one is specified
+								if !request.env['HTTP_REFERER'].blank?
+									uri = URI.parse(CGI.unescape(request.env['HTTP_REFERER']))
+									back_url = CGI.parse(uri.query)['back_url'].first if uri.query
 								end
+							end
+
+							if back_url
+								params[:back_url] = back_url.to_s
+								Rails.logger.debug("Patched back_url is #{params[:back_url]}") if Rails.logger.debug?
 							end
 						end
 						original_successful_authentication(user)

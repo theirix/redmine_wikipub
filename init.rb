@@ -2,7 +2,7 @@ Redmine::Plugin.register :redmine_wikipub do
 	name 'Redmine Wikipub plugin'
 	author 'Eugene Seliverstov'
 	description 'Publish project as a public wiki'
-	version '0.0.7'
+	version '0.0.8'
 	url 'http://github.com/theirix/redmine_wikipub'
 
 	settings :default => {'wikipub_hostname' => "", 'wikipub_project' => "",
