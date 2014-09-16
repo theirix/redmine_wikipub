@@ -84,9 +84,47 @@ module RedmineWikipub
 				base.class_eval do
 
 					alias_method :original_url_for, :url_for
+					alias_method :original_account_information, :account_information
 
 					def url_for(options = {})
 						wikipub_host = request ? Helper.current_wikipub_host(request) : nil
+						url_for_impl(wikipub_host, options)
+					end
+
+					def account_information(user, password)
+						# hacky solution to check whether this call is from MailHandler
+						if called_from_mailhandler?
+							wikipub_host = Config::entries.empty? ? '' : Config::entries.first.hostname
+							Rails.logger.debug("Patched account_information for host #{wikipub_host}") if Rails.logger && Rails.logger.debug?
+
+							set_language_if_valid user.language
+							@user = user
+							@password = password
+							@login_url = url_for_impl(wikipub_host, :controller => 'account', :action => 'login')
+							m = mail :to => user.mail,
+										:subject => l(:mail_subject_register, wikipub_host) do |format|
+								format.text { render 'account_information_wikipub' }
+								format.html { render 'account_information_wikipub' } unless Setting.plain_text_mail?
+							end
+							if !m.from.first.index('<')
+								m.from = "#{Helper.extract_host(wikipub_host)} <#{m.from.first}>"
+							end
+							m
+						else
+							Rails.logger.debug("Original account_information") if Rails.logger && Rails.logger.debug?
+							original_account_information(user,password)
+						end
+					end
+
+				private
+
+					def called_from_mailhandler?
+						caller_locations.any? do |backtr|
+							backtr.label == 'receive' && File.basename(backtr.path) == 'mail_handler.rb'
+						end
+					end
+
+					def url_for_impl(wikipub_host, options = {})
 						if wikipub_host.blank?
 							original_url_for(options)
 						else
@@ -121,7 +159,7 @@ module RedmineWikipub
 
 							if back_url
 								params[:back_url] = back_url.to_s
-								Rails.logger.debug("Patched back_url is #{params[:back_url]}") if Rails.logger.debug?
+								Rails.logger.debug("Patched back_url is #{params[:back_url]}") if Rails.logger && Rails.logger.debug?
 							end
 						end
 						original_successful_authentication(user)

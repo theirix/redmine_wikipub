@@ -67,8 +67,8 @@ module RedmineWikipub
           if Setting.plugin_redmine_wikipub && !Setting.plugin_redmine_wikipub['wikipub_extraconf'].blank?
             json_config = JSON::load(Setting.plugin_redmine_wikipub['wikipub_extraconf'])
           end
-        rescue => e
-          Rails.logger.warn("JSON load failed: #{e}")
+        rescue => exc
+          Rails.logger.warn("JSON load failed: #{exc}") if Rails.logger && Rails.logger.warn?
         end
         json_config = JSON::load('{"entries":[]}') unless json_config
 

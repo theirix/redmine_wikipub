@@ -30,14 +30,17 @@ module RedmineWikipub
 		private
 		def self.check_header_entry ce, value
 			begin
-				if !value.blank? && !ce.hostname.blank?
-					uri_str = prepend_with('http://', value.dup)
-					host = URI.parse(uri_str).host
-					ce if host =~ /#{ce.hostname}/
+				if !value.blank? && !ce.hostname.blank? &&
+						extract_host(value.dup) =~ /#{ce.hostname}/
+					ce
 				end
 			rescue Error => e
 				Rails.logger.warn("Host check failed with #{e}") if Rails.logger && Rails.logger.warn?
 			end
+		end
+
+		def self.extract_host s
+			URI.parse(prepend_with('http://', s)).host
 		end
 
 		# Checks whether request is performed against choosen host
