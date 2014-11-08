@@ -1,9 +1,9 @@
-require 'redmine/menu_manager'
-require 'redmine/themes'
-require 'application_helper'
-require 'mailer'
-require 'auth_source'
-require 'account_controller'
+require_dependency 'redmine/menu_manager'
+require_dependency 'redmine/themes'
+require_dependency 'application_helper'
+require_dependency 'mailer'
+require_dependency 'auth_source'
+require_dependency 'account_controller'
 
 module RedmineWikipub
 	module Patches

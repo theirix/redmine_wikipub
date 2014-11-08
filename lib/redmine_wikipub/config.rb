@@ -1,4 +1,3 @@
-require 'application_helper'
 require 'json'
 require 'cgi'
 
@@ -38,12 +37,14 @@ module RedmineWikipub
 			# Entry point
 			# Check config, set up routes and hooks
 			def bootstrap
-				load_config
-
-				Patches::RoutesPatch::prepend
 
 				# Rails classes patches
 				ActionDispatch::Callbacks.to_prepare do
+
+					load_config
+
+					Patches::RoutesPatch::prepend
+
 					unless Redmine::MenuManager::MenuHelper.included_modules.include? RedmineWikipub::Patches::MenuHelperPatch
 						Redmine::MenuManager::MenuHelper.send(:include, Patches::MenuHelperPatch)
 					end
@@ -58,8 +59,6 @@ module RedmineWikipub
 					end
 				end
 			end
-
-			private
 
 			def load_config
         json_config = nil
@@ -80,6 +79,6 @@ module RedmineWikipub
 			end
 
 
-		end
+		end # << self
 	end
 end

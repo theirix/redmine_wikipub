@@ -1,5 +1,3 @@
-require 'application_helper'
-
 module RedmineWikipub
 
 	class Helper
