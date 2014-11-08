@@ -41,7 +41,7 @@ module RedmineWikipub
 				# Rails classes patches
 				ActionDispatch::Callbacks.to_prepare do
 
-					load_config
+					RedmineWikipub::Config::load_config
 
 					Patches::RoutesPatch::prepend
 
