@@ -7,7 +7,11 @@ module RedmineWikipub
       if entry && entry.analytics && !entry.analytics.empty?
         return entry.analytics
       else
-        return ""
+        if (Config.default_analytics or "").empty?
+          return ""
+        else
+          return Config.default_analytics
+        end
       end
     end
   end
