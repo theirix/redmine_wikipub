@@ -4,4 +4,4 @@ en:
     greeting: 'Customize a project to become a standalone wikipage served from a specific hostname'
     extraconf:
       label: 'Configuration'
-      description: 'JSON with configuration. Example: { "entries" : [ {"hostname": "hostname-regex", "project": "project-name", "theme": "theme-name", "allowaccount": true } ] }'
+      description: 'JSON with configuration. Example: { "entries" : [ {"hostname": "hostname-regex", "project": "project-name", "theme": "theme-name", "allowaccount": true, "analytics": "footer code" } ] }'

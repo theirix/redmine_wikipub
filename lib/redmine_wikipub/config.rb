@@ -26,6 +26,10 @@ module RedmineWikipub
 			def allowaccount?
 				@json['allowaccount']
 			end
+
+      def analytics
+        @json['analytics']
+      end
 		end
 
 		class << self
@@ -74,7 +78,9 @@ module RedmineWikipub
 				@@entries = json_config['entries'].map { |je| Entry.new je }
 				@@entries.each do |e|
 					Rails.logger.debug("Wikipub entry: hostregex=#{e.hostname} "+
-														 "project=#{e.project} theme=#{e.theme} allowaccount=#{e.allowaccount?}") if Rails.logger && Rails.logger.debug?
+														 "project=#{e.project} theme=#{e.theme} " +
+                             "allowaccount=#{e.allowaccount?} " +
+                             "analytics=#{e.analytics}") if Rails.logger && Rails.logger.debug?
 				end
 			end
 
