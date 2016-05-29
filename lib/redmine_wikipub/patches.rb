@@ -17,10 +17,10 @@ module RedmineWikipub
           Config::entries.each do |ce|
             Rails.application.routes.prepend do
               constraints(lambda { |req| RedmineWikipub::Helper.find_current_entry(ce, req) }) do
-                match "projects/#{ce.project}" => redirect("/projects/#{ce.project}/wiki")
-                match "projects/#{ce.project}/activity" => redirect("/projects/#{ce.project}/wiki")
-                match "projects", :to => redirect('/')
-                match "/", :to => redirect("/projects/#{ce.project}/wiki")
+                match "projects/#{ce.project}" => redirect("/projects/#{ce.project}/wiki"), via: [:get, :post]
+                match "projects/#{ce.project}/activity" => redirect("/projects/#{ce.project}/wiki"), via: [:get, :post]
+                match "projects", :to => redirect('/'), via: [:get, :post]
+                match "/", :to => redirect("/projects/#{ce.project}/wiki"), via: [:get, :post]
               end
             end
           end
