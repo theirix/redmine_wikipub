@@ -30,15 +30,15 @@ module RedmineWikipub
     end
 
     # Patch MenuHelper method
+    # request only exists within helper so we cannot just patch MenuNode::allowed?
     module MenuHelperPatch
       def self.included(base)
         base.class_eval do
 
-          alias_method :original_allowed_node?, :allowed_node?
+          alias_method :original_menu_items_for, :menu_items_for
 
-          # Patched method to check whether a menu node is applicable
-          def allowed_node?(node, user, project)
-            if request
+          def wikipub_allowed?(node, project)
+            if respond_to?(:request) && request
               entry = Helper.find_current_entry_any(request)
               if entry
                 if !project || project.name == entry.project
@@ -48,7 +48,28 @@ module RedmineWikipub
                 end
               end
             end
-            original_allowed_node? node, user, project
+            return true
+          end
+
+          # note: method is copied from lib/redmine/menu_manager.rb
+          # must be syncronized with redmine
+          def menu_items_for(menu, project=nil)
+            items = []
+            Redmine::MenuManager.items(menu).root.children.each do |node|
+              if node.respond_to?(:allowed?)
+                is_allowed = node.allowed?(User.current, project)
+              else
+                is_allowed = allowed_node?(node, User.current, project)
+              end
+              if is_allowed && wikipub_allowed?(node, project)
+                if block_given?
+                  yield node
+                else
+                  items << node  # TODO: not used?
+                end
+              end
+            end
+            return block_given? ? nil : items
           end
 
         end
