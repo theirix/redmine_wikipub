@@ -100,17 +100,12 @@ module RedmineWikipub
 
 
     # Patch to provide a link to wikipub host in the registration e-mail
+    # There is no request object in a Mailer
     module MailerPatch
       def self.included(base)
         base.class_eval do
 
-          alias_method :original_url_for, :url_for
           alias_method :original_account_information, :account_information
-
-          def url_for(options = {})
-            wikipub_host = request ? Helper.current_wikipub_host(request) : nil
-            url_for_impl(wikipub_host, options)
-          end
 
           def account_information(user, password)
             # hacky solution to check whether this call is from MailHandler
@@ -121,7 +116,11 @@ module RedmineWikipub
               set_language_if_valid user.language
               @user = user
               @password = password
-              @login_url = url_for_impl(wikipub_host, :controller => 'account', :action => 'login')
+              if wikipub_host.blank?
+                @login_url = url_for(:controller => 'account', :action => 'login')
+              else
+                @login_url = url_for(:host => wikipub_host, :controller => 'account', :action => 'login')
+              end
               m = mail :to => user.mail,
                 :subject => l(:mail_subject_register, wikipub_host) do |format|
                 format.text { render 'account_information_wikipub' }
@@ -145,13 +144,6 @@ module RedmineWikipub
             end
           end
 
-          def url_for_impl(wikipub_host, options = {})
-            if wikipub_host.blank?
-              original_url_for(options)
-            else
-              original_url_for(options.merge({:host => wikipub_host}))
-            end
-          end
         end
       end
 
@@ -166,7 +158,7 @@ module RedmineWikipub
           def successful_authentication(user)
             wikipub_host = request ? Helper.current_wikipub_host(request) : nil
 
-            unless wikipub_host.blank?
+            if !wikipub_host.blank? && respond_to?(:request) && request
               # redirect to root if default login succeeded (i.e. simple login) instead of /mypage
               if request.env['HTTP_REFERER'] == url_for(:controller => 'account', :action => 'login')
                 back_url = Helper.prepend_with('http://', wikipub_host)
