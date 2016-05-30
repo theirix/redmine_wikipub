@@ -14,6 +14,11 @@ Remember that it is administrator responsibility to disable unneeded modules and
 == Issues
 
 - Changing settings require restart of redmine. Should be fixed soon.
+- Plugin is very fragile because it heavily monkey-patches the Redmine
+  and even copies implementation of methods. Had not found a way to do
+	things cleaner without some core patches.
+- Mailer in Redmine 3.x does not know about request so hostname substitution
+  is bot reliable.
 
 == Requirements:
 
