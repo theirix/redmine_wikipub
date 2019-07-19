@@ -47,7 +47,12 @@ module RedmineWikipub
       def bootstrap
 
         # Rails classes patches
-        ActionDispatch::Callbacks.to_prepare do
+        if Rails::VERSION::MAJOR >= 5 and Rails::VERSION::MINOR >= 1
+            reloader = ActiveSupport::Reloader
+        else
+            reloader = ActionDispatch::Callbacks
+        end
+        reloader.to_prepare do
 
           RedmineWikipub::Config::load_config
 
