@@ -11,7 +11,12 @@ module RedmineWikipub
     end
 
     def self.find_current_entry_any request
-      check_header_entry_any(request.env['HTTP_HOST']) || check_header_entry_any(request.env['HTTP_X_FORWARDED_HOST'])
+      entries = check_header_entry_any(request.env['HTTP_HOST']) + check_header_entry_any(request.env['HTTP_X_FORWARDED_HOST'])
+      entries.first
+    end
+
+    def self.find_current_entries request
+      check_header_entry_any(request.env['HTTP_HOST']) + check_header_entry_any(request.env['HTTP_X_FORWARDED_HOST'])
     end
 
     def self.excluded_menu_names with_account
@@ -42,9 +47,9 @@ module RedmineWikipub
     end
 
     # Checks whether request is performed against choosen host
-    # Return value is the matched config::entry
+    # Return value is all matched config::entries
     def self.check_header_entry_any value
-      Config::entries.map { |ce| check_header_entry(ce, value) }.compact.first
+      Config::entries.map { |ce| check_header_entry(ce, value) }.compact
     end
 
     def self.prepend_with prefix, s

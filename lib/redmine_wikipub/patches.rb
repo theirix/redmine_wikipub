@@ -39,10 +39,11 @@ module RedmineWikipub
 
           def wikipub_allowed?(node, project)
             if respond_to?(:request) && request
-              entry = Helper.find_current_entry_any(request)
-              if entry
-                if !project || project.name == entry.project
-                  if node && Helper.excluded_menu_names(entry.allowaccount?).include?(node.name)
+              entries = Helper.find_current_entries(request)
+              if !entries.empty?
+                allowaccount = entries.any? { |entry| entry.allowaccount? }
+                if !project || entries.any? { |entry| project.name == entry.project }
+                  if node && Helper.excluded_menu_names(allowaccount).include?(node.name)
                     return false
                   end
                 end
